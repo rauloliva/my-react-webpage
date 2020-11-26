@@ -1,38 +1,49 @@
 import React, { useState, useEffect } from 'react'
-var root = "/MyReactWebPage"
 const navOptions = [
-    { label: 'Welcome', path: root + '/' },
-    { label: 'My Projects', path: root + '/projects' },
-    { label: 'Contact Me', path: root + '/contact' }
+    { label: 'Welcome' },
+    { label: 'My Projects' },
+    { label: 'Contact Me' }
 ]
 
-const Header = () => {
-    const [uri, setUri] = useState([navOptions[1].label, navOptions[2].label])
-    const [path, setPath] = useState([navOptions[1].path, navOptions[2].path])
+const Header = props => {
+    const [ page, setPage] = useState([navOptions[1].label, navOptions[2].label])
+    const [ id, setId ] = useState(['projects', 'contact'])
     
     useEffect( () => {
-        var currentURI = window.location.href.split('/')
-        currentURI = currentURI[currentURI.length - 1]
+        const view = props.view
         
-        switch (currentURI) {
-            case '':
-            case root.replace('/',''):
-                setUri([navOptions[1].label, navOptions[2].label])
-                setPath([navOptions[1].path, navOptions[2].path])
+        switch (view) {
+            case 'landing':
+                setPage([navOptions[1].label, navOptions[2].label])
                 break;
             case 'projects':
-                setUri([navOptions[0].label, navOptions[2].label])
-                setPath([navOptions[0].path, navOptions[2].path])
+                setPage([navOptions[0].label, navOptions[2].label])
                 break;
             case 'contact':
-                setUri([navOptions[0].label, navOptions[1].label])
-                setPath([navOptions[0].path, navOptions[1].path])
+                setPage([navOptions[0].label, navOptions[1].label])
                 break;
             default:
-                setUri([])
-                setPath([])
+                setPage([])
         }
-    }, [setUri])
+    }, [props.view])
+
+    const handleOnClick = event => {
+        event.preventDefault()
+        const view = event.target.id
+        props.setView(view)
+        switch(view) {
+            case 'projects':
+                setId(['landing', 'contact']); 
+                break;
+
+            case 'contact':
+                setId(['landing', 'projects']); 
+                break;
+
+            default:
+                setId(['projects', 'contact']); 
+        }
+    }
 
     return (
         <header className="header">
@@ -42,8 +53,8 @@ const Header = () => {
             </div>
 
             <nav className="navbar">
-                <a href={path[0]} className="navbar__item-1">{uri[0]}</a>
-                <a href={path[1]} className="navbar__item-2">{uri[1]}</a>
+                <a href='/' id={ id[0] } onClick={ handleOnClick } className="navbar__item-1">{page[0]}</a>
+                <a href='/' id={ id[1] } onClick={ handleOnClick } className="navbar__item-2">{page[1]}</a>
             </nav>
         </header>
     )

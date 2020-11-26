@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import LandingPage from './components/LandingPage'
 import Header from './components/Header'
@@ -7,31 +7,34 @@ import ContactMe from './components/ContactMe'
 import MyProjects from './components/MyProjects'
 import * as serviceWorker from './serviceWorker';
 import './index.css';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route
-} from 'react-router-dom'
-const root = "/MyReactWebPage"
+
+const App = () => {
+  const [ view, setView ] = useState('landing')
+
+  const showView = () => {
+    switch (view) {
+      case 'landing':
+        return <LandingPage />
+
+      case 'projects':
+        return <MyProjects />
+    
+      default:
+        return <ContactMe />
+    }
+  }
+
+  return(
+    <div>
+      <Header setView={ setView } view={ view } />  
+      { showView() }
+      <Footer />
+    </div>
+  )
+}
 
 ReactDOM.render(
-  <Router>
-    <Header />
-    <Switch>
-      <Route exact path={ root + '/' } >
-        <LandingPage />
-      </Route>
-
-      <Route path={ root + '/projects' } >
-        <MyProjects />
-      </Route>
-
-      <Route path={ root + '/contact' }>
-        <ContactMe />
-      </Route>
-    </Switch>
-    <Footer />
-  </Router>,
+  <App />,
   document.getElementById('root')
 );
 
